@@ -513,4 +513,50 @@ client.on('interactionCreate', async (interaction) => {
       }
 
       case 'shuffle': {
-        if (player.queue.length === 0) {
+  if (player.queue.length === 0) {
+    return interaction.reply({
+      content: `${config.emojis.error} Queue is empty`,
+      ephemeral: true
+    });
+  }
+
+  player.queue.shuffle();
+
+  await interaction.reply({
+    content: `${config.emojis.shuffle} Queue shuffled`,
+    ephemeral: true
+  });
+  break;
+}
+
+case 'queue': {
+  const container = createQueueContainer(player, interaction.guild, interaction.user);
+
+  await interaction.reply({
+    components: [container],
+    flags: MessageFlags.IsComponentsV2
+  });
+  break;
+}
+
+case 'loop': {
+  const mode =
+    player.loop === 'none'
+      ? 'track'
+      : player.loop === 'track'
+      ? 'queue'
+      : 'none';
+
+  player.setLoop(mode);
+
+  await interaction.reply({
+    content: `${config.emojis.loop} Loop set to ${mode}`,
+    ephemeral: true
+  });
+  break;
+}
+    }
+  }
+});
+
+client.login(process.env.TOKEN);
